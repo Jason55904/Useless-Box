@@ -1,0 +1,252 @@
+#include <Servo.h> 
+
+Servo doorServo;
+Servo fingerServo;
+
+int swPin = 2;               //switch on pin 2
+int pos = 0;
+int doorpos =0;
+int DoorClosed = 135;
+int DoorOpen = 180;
+int FingerOff = 147;
+int FingerHide = 0;
+int selectedMove = 0;             //move selector
+int Finger75 = 120;    // 75% to  off position
+int Finger25 = 80;    // 25% to  off position
+
+
+void setup()
+{
+pinMode(swPin, INPUT);
+doorServo.attach(9);           //set door servo on Pin 9 pwm
+fingerServo.attach(10);          //set finger servo on Pin 10 pwm
+doorServo.write(DoorClosed);           //set door to hiding position 
+fingerServo.write(FingerHide);            //set finger to hiding position
+}
+
+void loop(){
+//if the switch is on, move door and finger to switch it off
+  if(digitalRead(swPin) == HIGH)
+{
+   if (selectedMove > 7) { 
+    selectedMove = 0; 
+}
+//when all moves are played, repeat the moves from beginning 
+    
+    if (selectedMove == 0) { 
+    simpleClose(); 
+}
+    else if (selectedMove == 1) { 
+    simpleClose(); 
+}   
+    else if (selectedMove == 2) { 
+    simpleClose2(); 
+}
+    else if (selectedMove == 3) { 
+    crazydoor(); 
+}
+    else if (selectedMove == 4) { 
+    slow(); 
+}
+    else if (selectedMove == 5) { 
+    slow2(); 
+}
+    else if (selectedMove == 6) { 
+    angry(); 
+}
+    else if (selectedMove == 7) { 
+    giveup(); 
+}
+ selectedMove += 1;      //swith to next move 
+}
+}
+// Moves List
+     
+// basic move 
+    void simpleClose() 
+{
+    delay(500);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(1000);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(1000);
+    fingerServo.write(FingerHide);            //set finger to hiding position
+    delay(1000);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(1000);
+}
+ 
+// open and wait, then move finger and wait, then switch of and hide  
+    void simpleClose2()
+{
+    delay(500);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(3000);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(3000);
+    fingerServo.write(FingerHide);            //set finger to hiding position
+    delay(1000);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(1000);
+}
+
+//open door then close it many times, wait, then quickly reopen, switch off and hide. 
+    void crazydoor()
+{
+    delay(500);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(200);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(200);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(200);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(200);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(200);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(300);
+    fingerServo.write(FingerHide);            //set finger to hiding position
+    delay(1000);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(1000);
+}
+//open door,move finger very slowly forward very slowly, then quickly close door
+ void slow()
+ {
+    delay(500);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    for(pos = FingerHide; pos < Finger75; pos += 1)   //Moving hand slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(300);
+//hiding hand
+    for(pos = FingerOff; pos>=FingerHide; pos-=1)      
+{                                
+    fingerServo.write(pos);               
+    delay(30);                        
+} 
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(1000);
+}
+
+//open door,move finger very slowly forward and back to hiding very slowly, then quickly close door
+void slow2()
+{
+    delay(500);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(200);
+    for(pos = FingerHide; pos < Finger75; pos += 1)   //Moving forward hand slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    for(pos = Finger75; pos > Finger25; pos -=1)   //Moving back hand slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    for(pos = Finger25; pos < Finger75; pos += 1)   //Moving hand forward slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    for(pos = Finger75; pos > Finger25; pos -=1)   //Moving hand back slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    for(pos = Finger25; pos < Finger75; pos += 1)   //Moving hand forward slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(300);
+    for(pos = FingerOff; pos > FingerHide; pos -=1)   //Moving hand back slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(30);                       
+} 
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(1000);
+}
+
+    // open and wait, then move finger and wait, then switch of and hide  
+    void angry()
+{
+    delay(500);
+    doorServo.write(DoorOpen);           //set door to open position 
+    delay(500);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(500);
+    fingerServo.write(Finger75);            //set finger to 75% off position
+    delay(500);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(500);
+    fingerServo.write(Finger75);           //set finger to 75% off position
+    delay(500);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(500);
+    fingerServo.write(Finger75);            //set finger to 75% off position
+    delay(500);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(500);
+    fingerServo.write(Finger75);            //set finger to 75% off position
+    delay(500);
+    fingerServo.write(FingerOff);            //set finger to swith off position
+    delay(500);
+    fingerServo.write(FingerHide);            //set finger to swith off position
+    delay(500);
+    doorServo.write(DoorClosed);           //set door to closed position 
+    delay(1000);
+}
+   
+    void giveup()// I quit
+{
+    delay(500);
+    doorServo.write(DoorOpen);                 //set door to open position 
+    delay(500);
+    fingerServo.write(Finger75);           //set finger to 75% off position
+    delay(500);
+    for(pos = Finger75; pos > FingerHide; pos -=1)   //Moving hand back slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(20);   
+}
+    fingerServo.write(Finger75);           //set finger to 75% off position
+    delay(500);
+    for(pos = Finger75; pos > FingerHide; pos -=1)   //Moving hand back slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(20);   
+}
+    fingerServo.write(Finger75);           //set finger to 75% off position
+    delay(500);    
+    for(pos = Finger75; pos > FingerHide; pos -=1)   //Moving hand back slowly
+{                                   
+    fingerServo.write(pos);               
+    delay(20);   
+}
+    for(doorpos = DoorOpen; doorpos > DoorClosed; doorpos -=1)   //Moving hand back slowly
+{                                   
+    doorServo.write(doorpos);               
+    delay(20);   
+}
+}
